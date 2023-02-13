@@ -1,35 +1,45 @@
-property isTidalPlaying : true
-property wasTidalPlaying : true
+-- Config
+property defaultAudioDeviceName : "'MacBook Pro Speakers'"
+property tidalAudioDeviceName : "'AudioQuest DragonFly Red v1.0'"
+property switchDeviceCommand : "/usr/local/bin/SwitchAudioSource -s "
 
+-- Variables
+global isPlaying 
+global wasPlaying
+
+set isPlaying to true
+
+-- Main loop
 repeat
+    set  wasPlaying to isPlaying 
+    set isPlaying to getTidalPlaybackStatus()
+
+    set playbackStopped to isPlaying = false and  wasPlaying = true
+    set playbackStarted to isPlaying = true and  wasPlaying = false
+    set playbackContinues to isPlaying = false and  wasPlaying = false
+
+    if playbackStopped
+        do shell script switchDeviceCommand & tidalAudioDeviceName
+    else if playbackStarted
+        do shell script switchDeviceCommand & defaultAudioDeviceName
+    end if
+
+    if playbackContinues
+        delay 5
+    end if
+
+    delay 1
+end repeat
+
+-- Functions
+on getTidalPlaybackStatus()
     tell application "System Events"
         try
             tell process "TIDAL"
-                set wasTidalPlaying to isTidalPlaying
-                if name of menu item 0 of menu "Playback" of menu bar 1 is "Pause" then
-                    set isTidalPlaying to true
-                end if
-                if name of menu item 0 of menu "Playback" of menu bar 1 is "Play" then
-                    set isTidalPlaying to false
-                end if
+                return name of menu item 0 of menu "Playback" of menu bar 1 is "Pause"
             end tell
         on error
-            set isTidalPlaying to false
-            set wasTidalPlaying to false
+            return false
         end try
     end tell
-
-    if isTidalPlaying = false and wasTidalPlaying = true
-        do shell script "/usr/local/bin/SwitchAudioSource -s 'AudioQuest DragonFly Red v1.0'"
-    end if
-
-    if isTidalPlaying = true and wasTidalPlaying = false
-        do shell script "/usr/local/bin/SwitchAudioSource -s 'MacBook Pro Speakers'"
-    end if
-
-    if isTidalPlaying = false and wasTidalPlaying = false
-        delay 5
-    else
-        delay 1
-    end if
-end repeat
+end getTidalPlaybackStatus
