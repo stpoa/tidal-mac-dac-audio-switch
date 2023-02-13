@@ -27,7 +27,7 @@ repeat
         do shell script "/usr/local/bin/SwitchAudioSource -s 'MacBook Pro Speakers'"
     end if
 
-    if wasTidalPlaying = false and wasTidalPlaying = false
+    if isTidalPlaying = false and wasTidalPlaying = false
         delay 5
     else
         delay 1
