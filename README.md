@@ -6,8 +6,7 @@ This AppleScript monitors the playback status of TIDAL, and switches the default
 
 This script requires the **`SwitchAudioSource`** command-line utility, which can be installed via Homebrew:
 
-```
-shCopy code
+```sh
 brew install switchaudio-osx
 
 ```
