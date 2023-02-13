@@ -7,11 +7,12 @@ property switchDeviceCommand : "/usr/local/bin/SwitchAudioSource -s "
 global isPlaying 
 global wasPlaying
 
-set isPlaying to true
+-- Init
+set isPlaying to getTidalPlaybackStatus()
 
 -- Main loop
 repeat
-    set  wasPlaying to isPlaying 
+    set  wasPlaying to isPlaying
     set isPlaying to getTidalPlaybackStatus()
 
     set playbackStopped to isPlaying = false and  wasPlaying = true
